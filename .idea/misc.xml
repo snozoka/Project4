@@ -3,9 +3,13 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Scott/AndroidStudioProjects/LocationReminderStarterCode/StarterCode/app/src/main/res/layout/activity_authentication.xml" value="0.17074275362318841" />
+        <entry key="..\:/Users/Scott/AndroidStudioProjects/LocationReminderStarterCode/StarterCode/app/src/main/res/layout/activity_reminder_description.xml" value="0.17074275362318841" />
+        <entry key="..\:/Users/Scott/AndroidStudioProjects/LocationReminderStarterCode/StarterCode/app/src/main/res/layout/activity_reminders.xml" value="0.17074275362318841" />
         <entry key="..\:/Users/Scott/AndroidStudioProjects/LocationReminderStarterCode/StarterCode/app/src/main/res/layout/fragment_reminders.xml" value="0.17074275362318841" />
         <entry key="..\:/Users/Scott/AndroidStudioProjects/LocationReminderStarterCode/StarterCode/app/src/main/res/layout/fragment_save_reminder.xml" value="0.17074275362318841" />
         <entry key="..\:/Users/Scott/AndroidStudioProjects/LocationReminderStarterCode/StarterCode/app/src/main/res/layout/fragment_select_location.xml" value="0.17074275362318841" />
+        <entry key="..\:/Users/Scott/AndroidStudioProjects/LocationReminderStarterCode/StarterCode/app/src/main/res/layout/it_reminder.xml" value="0.17074275362318841" />
       </map>
     </option>
   </component>
