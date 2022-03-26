@@ -16,6 +16,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -58,6 +59,8 @@ dependencies {
     //Navigation dependencies
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-rc1'
+    implementation 'com.google.firebase:firebase-auth-ktx:21.0.2'
+    implementation 'com.firebaseui:firebase-ui-auth:7.2.0'
     kapt "androidx.lifecycle:lifecycle-compiler:$archLifecycleVersion"
     implementation "androidx.lifecycle:lifecycle-extensions:$archLifecycleVersion"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$archLifecycleVersion"
@@ -126,5 +129,8 @@ dependencies {
     //Firebase
     implementation platform('com.google.firebase:firebase-bom:29.2.1')
     //implementation 'com.google.firebase:firebase-analytics-ktx'
+
+    //Multidex
+    implementation 'com.android.support:multidex:1.0.3'
 
 }

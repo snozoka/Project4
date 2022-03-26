@@ -52,7 +52,7 @@ ext {
     constraintVersion = '2.0.0-rc1'
     dexMakerVersion = '2.12.1'
     coroutinesVersion = '1.2.1'
-    roomVersion = '2.3.0'
+    roomVersion = '2.4.0-alpha03'
     koinVersion = '2.0.1'
     truthVersion = '0.44'
     junitVersion = '4.12'
