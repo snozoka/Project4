@@ -37,10 +37,5 @@
         android:name="com.udacity.project4.authentication.AuthenticationActivity"
         android:label="activity_authentication"
         tools:layout="@layout/activity_authentication" />
-    <fragment
-        android:id="@+id/loginFragment2"
-        android:name="com.udacity.project4.loginFragment"
-        android:label="fragment_login"
-        tools:layout="@layout/fragment_login" />
 
 </navigation>

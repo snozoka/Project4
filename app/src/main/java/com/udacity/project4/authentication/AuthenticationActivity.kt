@@ -29,19 +29,16 @@ class AuthenticationActivity : AppCompatActivity() {
         const val TAG = "AuthenticationActivity"
         const val SIGN_IN_RESULT_CODE = 1001
     }
-    var buttonLogin = findViewById<Button>(R.id.buttonLogin)
+    private lateinit var buttonLogin: Button // = findViewById<Button>(R.id.buttonLogin)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_authentication)
 
+        buttonLogin = findViewById<Button>(R.id.buttonLogin)
+        observeAuthenticationState()
+
         buttonLogin.setOnClickListener { launchSignInFlow() }
-//         TODO: Implement the create account and sign in using FirebaseUI, use sign in using email and sign in using Google
-
-//          TODO: If the user was authenticated, send him to RemindersActivity
-
-//          TODO: a bonus is to customize the sign in flow to look nice using :
-        //https://github.com/firebase/FirebaseUI-Android/blob/master/auth/README.md#custom-layout
 
     }
 
@@ -107,6 +104,7 @@ class AuthenticationActivity : AppCompatActivity() {
                     buttonLogin.setOnClickListener {
                         launchSignInFlow()
                     }
+                    finish()
                 }
             }
         })
