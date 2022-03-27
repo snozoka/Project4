@@ -73,7 +73,6 @@ class AuthenticationActivity : AppCompatActivity() {
                 // User successfully signed in
                 Log.i(TAG, "Successfully signed in user ${FirebaseAuth.getInstance().currentUser?.displayName}!")
                 finish()
-                return
             } else {
                 // Sign in failed. If response is null the user canceled the
                 // sign-in flow using the back button. Otherwise check
@@ -83,16 +82,14 @@ class AuthenticationActivity : AppCompatActivity() {
         }
     }
 
-    private fun observeAuthenticationState() {
+
+    fun observeAuthenticationState() {
 
 
         viewModel.authenticationState.observe(this , Observer { authenticationState ->
             // TODO 1. Use the authenticationState variable you just added
             // in LoginViewModel and change the UI accordingly.
             when (authenticationState) {
-                // TODO 2.  If the user is logged in,
-                // you can customize the welcome message they see by
-                // utilizing the getFactWithPersonalization() function provided
                 LoginViewModel.AuthenticationState.AUTHENTICATED -> {
                     val intent = Intent(this, RemindersActivity::class.java)
                     startActivity(intent)
