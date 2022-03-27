@@ -7,13 +7,10 @@ import android.util.Log
 import android.widget.Button
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContentProviderCompat.requireContext
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.map
-import com.google.firebase.auth.FirebaseAuth
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
+import com.google.firebase.auth.FirebaseAuth
 import com.udacity.project4.R
 import com.udacity.project4.locationreminders.RemindersActivity
 
@@ -35,7 +32,7 @@ class AuthenticationActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_authentication)
 
-        buttonLogin = findViewById<Button>(R.id.buttonLogin)
+        buttonLogin = findViewById(R.id.buttonLogin)
         observeAuthenticationState()
 
         buttonLogin.setOnClickListener { launchSignInFlow() }
@@ -83,23 +80,20 @@ class AuthenticationActivity : AppCompatActivity() {
     }
 
 
-    fun observeAuthenticationState() {
+    private fun observeAuthenticationState() {
 
 
         viewModel.authenticationState.observe(this , Observer { authenticationState ->
-            // TODO 1. Use the authenticationState variable you just added
+            // Use the authenticationState variable you just added
             // in LoginViewModel and change the UI accordingly.
             when (authenticationState) {
                 LoginViewModel.AuthenticationState.AUTHENTICATED -> {
                     val intent = Intent(this, RemindersActivity::class.java)
                     startActivity(intent)
                     finish()
-//                    binding.authButton.setOnClickListener {
-//                        //AuthUI.getInstance().signOut(requireContext())
-//                    }
                 }
                 else -> {
-                    // TODO 3. Lastly, if there is no logged-in user,
+                    // Lastly, if there is no logged-in user,
                     buttonLogin.setOnClickListener {
                         launchSignInFlow()
                     }

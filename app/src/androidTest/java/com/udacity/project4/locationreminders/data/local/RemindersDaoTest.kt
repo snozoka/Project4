@@ -5,7 +5,6 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.SmallTest;
-import com.google.android.gms.tasks.Task
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
 
 import org.junit.Before;
