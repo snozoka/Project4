@@ -41,8 +41,8 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         //Obtain the SupportMapFragment and get notified when the map is ready
-        val mapFragment = AppCompatActivity().supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
-        mapFragment.getMapAsync(this)
+        val mapFragment = AppCompatActivity().supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
+        mapFragment?.getMapAsync(this)
 
         binding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_select_location, container, false)
@@ -65,6 +65,15 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         return binding.root
     }
 
+    private fun setMapLongClick(map: GoogleMap){
+        map.setOnMapClickListener { latlng ->
+            map.addMarker(
+                MarkerOptions()
+                    .position(latlng)
+            )
+        }
+    }
+
     private fun onLocationSelected() {
         //        TODO: When the user confirms on the selected location,
         //         send back the selected location details to the view model
@@ -77,17 +86,21 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     }
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
-        // TODO: Change the map type based on the user's selection.
+        // Change the map type based on the user's selection.
         R.id.normal_map -> {
+            map.mapType = GoogleMap.MAP_TYPE_NORMAL
             true
         }
         R.id.hybrid_map -> {
+            map.mapType = GoogleMap.MAP_TYPE_HYBRID
             true
         }
         R.id.satellite_map -> {
+            map.mapType = GoogleMap.MAP_TYPE_SATELLITE
             true
         }
         R.id.terrain_map -> {
+            map.mapType = GoogleMap.MAP_TYPE_TERRAIN
             true
         }
         else -> super.onOptionsItemSelected(item)
@@ -97,6 +110,15 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         if (googleMap != null) {
             map = googleMap
         }
+        val latitude = 0.0
+        val longitude = 0.0
+        val zoomLevel = 15f
+
+        val homeLatLng = LatLng(latitude,longitude)
+        //map.moveCamera(CameraUpdateFactory.newLatLngZoom(homeLatLng,zoomLevel))
+        //map.addMarker(MarkerOptions().position(homeLatLng).title("Marker in Sydney"))
+        setMapLongClick(map)
+
 
         //Add marker in Sydney and move camera
         val sydney = LatLng(-34.0, 151.0)
