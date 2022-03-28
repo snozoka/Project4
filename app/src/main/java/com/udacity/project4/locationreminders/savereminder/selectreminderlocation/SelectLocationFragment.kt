@@ -141,7 +141,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
                 // for ActivityCompat#requestPermissions for more details.
                 return
             }
-            map.setMyLocationEnabled(true)
+            map.isMyLocationEnabled = true
         }
         else {
             activity?.let {
@@ -168,7 +168,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         // Check if location permissions are granted and if so enable the
         // location data layer.
         if (requestCode == REQUEST_LOCATION_PERMISSION) {
-            if (grantResults.size > 0 && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+            if (grantResults.isNotEmpty() && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                 enableMyLocation()
             }
         }
