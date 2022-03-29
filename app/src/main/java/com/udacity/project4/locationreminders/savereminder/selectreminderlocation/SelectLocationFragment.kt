@@ -37,16 +37,15 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         //Obtain the SupportMapFragment and get notified when the map is ready
+
+        binding =
+            DataBindingUtil.inflate(inflater, R.layout.fragment_select_location, container, false)
         val mapFragment = childFragmentManager.findFragmentByTag("my_mapTag") as SupportMapFragment?
         Log.i("Child FragManager List", childFragmentManager?.fragments.toString())
         Log.i("Parent FragManager List", parentFragmentManager?.fragments.toString())
         Log.i("Parent Fragment List", parentFragment.toString())
-            //(activity as FragmentActivity).supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
+        //(activity as FragmentActivity).supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(this)
-
-
-        binding =
-            DataBindingUtil.inflate(inflater, R.layout.fragment_select_location, container, false)
 
         binding.viewModel = _viewModel
         binding.lifecycleOwner = this
