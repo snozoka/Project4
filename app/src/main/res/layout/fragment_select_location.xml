@@ -15,13 +15,12 @@
         android:layout_height="match_parent">
         <!--Add the map fragment for the user to select the location-->
         <fragment
+            android:id="@+id/reminder_map"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/map"
+            android:tag="my_mapTag"
             android:name="com.google.android.gms.maps.SupportMapFragment"
-            tools:context=".locationreminders.RemindersActivity"
-            />
-
+            tools:context=".locationreminders.RemindersActivity"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
