@@ -8,6 +8,7 @@ import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.content.res.Resources
+import android.location.Location
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
@@ -16,10 +17,9 @@ import android.view.*
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.checkSelfPermission
-import androidx.core.content.PermissionChecker.checkSelfPermission
+import com.google.android.gms.location.LocationServices
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
+import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -56,6 +56,16 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     private var selectedLongitude: Double = 0.0
     private var selectedPointerTitle: String = ""
     private lateinit var selectedPoiMarker: PointOfInterest
+    // The entry point to the Fused Location Provider.
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+
+    // A default location (Sydney, Australia) and default zoom to use when location permission is
+    // not granted.
+    private val defaultLocation = LatLng(-33.8523341, 151.2106085)
+
+    // The geographical location where the device is currently located. That is, the last-known
+    // location retrieved by the Fused Location Provider.
+    private var lastKnownLocation: Location? = null
 
     private val geofencePendingIntent: PendingIntent by lazy {
         val intent = Intent(context, GeofenceBroadcastReceiver::class.java)
@@ -67,11 +77,17 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         //Obtain the SupportMapFragment and get notified when the map is ready
-
         binding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_select_location, container, false)
+
         val mapFragment = childFragmentManager.findFragmentByTag("my_mapTag") as SupportMapFragment?
         mapFragment?.getMapAsync(this)
+        // Construct a FusedLocationProviderClient.
+        fusedLocationProviderClient = activity?.let {
+            LocationServices.getFusedLocationProviderClient(
+                it
+            )
+        }!!
 
 
         binding.viewModel = _viewModel
@@ -81,7 +97,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         setDisplayHomeAsUpEnabled(true)
 
 
-//        TODO: call this function after the user confirms on the selected location
+//        Call this function after the user confirms on the selected location
         onLocationSelected()
 
         geofencingClient = activity?.let { LocationServices.getGeofencingClient(it) }!!
@@ -231,6 +247,39 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         }
     }
 
+    private fun getDeviceLocation() {
+        /*
+         * Get the best and most recent location of the device, which may be null in rare
+         * cases when a location is not available.
+         */
+        try {
+            if (isPermissionGranted()) {
+                val locationResult = fusedLocationProviderClient.lastLocation
+                activity?.let {
+                    locationResult.addOnCompleteListener(it) { task ->
+                        if (task.isSuccessful) {
+                            // Set the map's camera position to the current location of the device.
+                            lastKnownLocation = task.result
+                            if (lastKnownLocation != null) {
+                                map?.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                                    LatLng(lastKnownLocation!!.latitude,
+                                        lastKnownLocation!!.longitude), DEFAULT_ZOOM.toFloat()))
+                            }
+                        } else {
+                            Log.d(TAG, "Current location is null. Using defaults.")
+                            Log.e(TAG, "Exception: %s", task.exception)
+                            map?.moveCamera(CameraUpdateFactory
+                                .newLatLngZoom(defaultLocation, DEFAULT_ZOOM.toFloat()))
+                            map?.uiSettings?.isMyLocationButtonEnabled = false
+                        }
+                    }
+                }
+            }
+        } catch (e: SecurityException) {
+            Log.e("Exception: %s", e.message, e)
+        }
+    }
+
     @TargetApi(29 )
     private fun requestForegroundAndBackgroundLocationPermissions() {
         if (foregroundAndBackgroundLocationPermissionApproved())
@@ -298,7 +347,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
                             REQUEST_TURN_DEVICE_LOCATION_ON)
                     }
                 } catch (sendEx: IntentSender.SendIntentException) {
-                    Log.d(TAG, "Error geting location settings resolution: " + sendEx.message)
+                    Log.d(TAG, "Error getting location settings resolution: " + sendEx.message)
                 }
             } else {
                 Snackbar.make(
@@ -319,7 +368,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
 
 
     private fun onLocationSelected() {
-        //        TODO: When the user confirms on the selected location,
+        //        When the user confirms on the selected location,
         //         send back the selected location details to the view model
         //         and navigate back to the previous fragment to save the reminder and add the geofence
         binding.buttonSaveReminder.setOnClickListener {
@@ -345,92 +394,6 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
             checkDeviceLocationSettingsAndStartGeofence(false)
         }
     }
-
-
-//    private fun addGeofenceForClue() {
-//        if (_viewModel.geofenceIsActive()) return
-//        val currentGeofenceIndex = _viewModel.nextGeofenceIndex()
-//        if(currentGeofenceIndex >= GeofencingConstants.NUM_LANDMARKS) {
-//            removeGeofences()
-//            _viewModel.geofenceActivated()
-//            return
-//        }
-//        val currentGeofenceData = GeofencingConstants.LANDMARK_DATA[currentGeofenceIndex]
-//
-//        // Build the Geofence Object
-//        val geofence = Geofence.Builder()
-//            // Set the request ID, string to identify the geofence.
-//            .setRequestId(currentGeofenceData.id)
-//            // Set the circular region of this geofence.
-//            .setCircularRegion(currentGeofenceData.latLong.latitude,
-//                currentGeofenceData.latLong.longitude,
-//                GeofencingConstants.GEOFENCE_RADIUS_IN_METERS
-//            )
-//            // Set the expiration duration of the geofence. This geofence gets
-//            // automatically removed after this period of time.
-//            .setExpirationDuration(GeofencingConstants.GEOFENCE_EXPIRATION_IN_MILLISECONDS)
-//            // Set the transition types of interest. Alerts are only generated for these
-//            // transition. We track entry and exit transitions in this sample.
-//            .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
-//            .build()
-//
-//        // Build the geofence request
-//        val geofencingRequest = GeofencingRequest.Builder()
-//            // The INITIAL_TRIGGER_ENTER flag indicates that geofencing service should trigger a
-//            // GEOFENCE_TRANSITION_ENTER notification when the geofence is added and if the device
-//            // is already inside that geofence.
-//            .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER)
-//
-//            // Add the geofences to be monitored by geofencing service.
-//            .addGeofence(geofence)
-//            .build()
-//
-//        // First, remove any existing geofences that use our pending intent
-//        geofencingClient.removeGeofences(geofencePendingIntent)?.run {
-//            // Regardless of success/failure of the removal, add the new geofence
-//            addOnCompleteListener {
-//                // Add the new geofence request with the new geofence
-//                geofencingClient.addGeofences(geofencingRequest, geofencePendingIntent)?.run {
-//                    addOnSuccessListener {
-//                        // Geofences added.
-//                        Toast.makeText(this@HuntMainActivity, R.string.geofences_added,
-//                            Toast.LENGTH_SHORT)
-//                            .show()
-//                        Log.e("Add Geofence", geofence.requestId)
-//                        // Tell the viewmodel that we've reached the end of the game and
-//                        // activated the last "geofence" --- by removing the Geofence.
-//                        _viewModel.geofenceActivated()
-//                    }
-//                    addOnFailureListener {
-//                        // Failed to add geofences.
-//                        Toast.makeText(this@HuntMainActivity, R.string.geofences_not_added,
-//                            Toast.LENGTH_SHORT).show()
-//                        if ((it.message != null)) {
-//                            Log.w(TAG, it.message)
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
-
-//    private fun removeGeofences() {
-//        if (!foregroundAndBackgroundLocationPermissionApproved()) {
-//            return
-//        }
-//        geofencingClient.removeGeofences(geofencePendingIntent)?.run {
-//            addOnSuccessListener {
-//                // Geofences removed
-//                Log.d(TAG, getString(R.string.geofences_removed))
-//                Toast.makeText(applicationContext, R.string.geofences_removed, Toast.LENGTH_SHORT)
-//                    .show()
-//            }
-//            addOnFailureListener {
-//                // Failed to remove geofences
-//                Log.d(TAG, getString(R.string.geofences_not_removed))
-//            }
-//        }
-//    }
 
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -466,9 +429,10 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         val longitude = -122.084270
         val zoomLevel = 15f
 
-        val homeLatLng = LatLng(latitude,longitude)
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(homeLatLng,zoomLevel))
-        map.addMarker(MarkerOptions().position(homeLatLng).title("Marker in Sydney"))
+//        val homeLatLng = LatLng(latitude,longitude)
+//        map.moveCamera(CameraUpdateFactory.newLatLngZoom(homeLatLng,zoomLevel))
+//        map.addMarker(MarkerOptions().position(homeLatLng).title("Marker in Sydney"))
+        getDeviceLocation()
         setMapLongClick(map)
         setPoiClick(map)
         setMapStyle(map)
@@ -480,6 +444,14 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     companion object {
         internal const val ACTION_GEOFENCE_EVENT =
             "SelectLocationFragment.reminderSelector.action.ACTION_GEOFENCE_EVENT"
+        private const val DEFAULT_ZOOM = 15
+
+        // Keys for storing activity state.
+        private const val KEY_CAMERA_POSITION = "camera_position"
+        private const val KEY_LOCATION = "location"
+
+        // Used for selecting the current place.
+        private const val M_MAX_ENTRIES = 5
     }
 
 
@@ -487,6 +459,6 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
 private const val REQUEST_FOREGROUND_AND_BACKGROUND_PERMISSION_RESULT_CODE = 33
 private const val REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE = 34
 private const val REQUEST_TURN_DEVICE_LOCATION_ON = 29
-private const val TAG = "HuntMainActivity"
+private const val TAG = "SelectLocationFragment"
 private const val LOCATION_PERMISSION_INDEX = 0
 private const val BACKGROUND_LOCATION_PERMISSION_INDEX = 1
