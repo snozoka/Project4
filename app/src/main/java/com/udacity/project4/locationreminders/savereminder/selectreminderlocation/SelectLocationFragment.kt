@@ -3,7 +3,6 @@ package com.udacity.project4.locationreminders.savereminder.selectreminderlocati
 
 import android.Manifest
 import android.annotation.TargetApi
-import android.app.PendingIntent
 import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
@@ -17,27 +16,24 @@ import android.view.*
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.google.android.gms.location.LocationServices
 import androidx.databinding.DataBindingUtil
-import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.*
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MapStyleOptions
+import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.PointOfInterest
 import com.google.android.material.snackbar.Snackbar
 import com.udacity.project4.BuildConfig
 import com.udacity.project4.R
 import com.udacity.project4.base.BaseFragment
-import com.udacity.project4.base.NavigationCommand
 import com.udacity.project4.databinding.FragmentSelectLocationBinding
-import com.udacity.project4.locationreminders.geofence.GeofenceBroadcastReceiver
-import com.udacity.project4.locationreminders.savereminder.SaveReminderFragmentDirections
 import com.udacity.project4.locationreminders.savereminder.SaveReminderViewModel
 import com.udacity.project4.utils.setDisplayHomeAsUpEnabled
-import kotlinx.android.synthetic.main.fragment_select_location.*
 import org.koin.android.ext.android.inject
 import java.util.*
 
@@ -49,7 +45,6 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     private lateinit var map: GoogleMap
     private val TAG = SelectLocationFragment::class.java.simpleName
     private val REQUEST_LOCATION_PERMISSION = 1
-    private lateinit var geofencingClient: GeofencingClient
     private val runningQOrLater = android.os.Build.VERSION.SDK_INT >=
             android.os.Build.VERSION_CODES.Q
     private var selectedLatitude: Double = 0.0
@@ -66,12 +61,6 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     // The geographical location where the device is currently located. That is, the last-known
     // location retrieved by the Fused Location Provider.
     private var lastKnownLocation: Location? = null
-
-    private val geofencePendingIntent: PendingIntent by lazy {
-        val intent = Intent(context, GeofenceBroadcastReceiver::class.java)
-        intent.action = ACTION_GEOFENCE_EVENT
-        PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -100,7 +89,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
 //        Call this function after the user confirms on the selected location
         onLocationSelected()
 
-        geofencingClient = activity?.let { LocationServices.getGeofencingClient(it) }!!
+
 
 
         return binding.root
@@ -376,8 +365,10 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
             _viewModel.latitude.value = selectedLatitude
             _viewModel.longitude.value = selectedLongitude
             //_viewModel.selectedPOI.value = selectedPoiMarker
-            _viewModel.navigationCommand.value =
-                NavigationCommand.To(SelectLocationFragmentDirections.actionSelectLocationFragmentToSaveReminderFragment())
+//            _viewModel.navigationCommand.value =
+//                NavigationCommand.To(SelectLocationFragmentDirections.actionSelectLocationFragmentToSaveReminderFragment())
+
+            Toast.makeText(context, "Location saved", Toast.LENGTH_SHORT).show()
         }
     }
 
