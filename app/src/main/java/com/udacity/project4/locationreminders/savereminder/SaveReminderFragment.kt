@@ -76,8 +76,9 @@ class SaveReminderFragment : BaseFragment() {
 
 //            TODO: use the user entered reminder details to:
 //             1) add a geofencing request
+            val geofenceList = arrayListOf<Geofence>()
             val geofence = Geofence.Builder()
-                .setRequestId(_viewModel.selectedPOI.value?.placeId)
+                .setRequestId(_viewModel.reminderTitle.value)
                 .setCircularRegion(_viewModel.latitude.value!!,
                     _viewModel.longitude.value!!,
                     100f
@@ -97,6 +98,11 @@ class SaveReminderFragment : BaseFragment() {
                             ActivityCompat.checkSelfPermission(
                                 it1,
                                 Manifest.permission.ACCESS_FINE_LOCATION
+                            )
+                        } != PackageManager.PERMISSION_GRANTED && context?.let { it1 ->
+                            ActivityCompat.checkSelfPermission(
+                                it1,
+                                Manifest.permission.ACCESS_COARSE_LOCATION
                             )
                         } != PackageManager.PERMISSION_GRANTED
                     ) {
@@ -121,7 +127,7 @@ class SaveReminderFragment : BaseFragment() {
                             Toast.makeText(context, R.string.geofences_not_added,
                                 Toast.LENGTH_SHORT).show()
                             if ((it.message != null)) {
-                                Log.w("", it.message!!)
+                                Log.w("Geofence error add", it.message!!)
                             }
                         }
                     }
