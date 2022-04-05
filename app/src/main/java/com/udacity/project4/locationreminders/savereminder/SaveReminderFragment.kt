@@ -1,11 +1,16 @@
 package com.udacity.project4.locationreminders.savereminder
 
+import android.Manifest
 import android.app.PendingIntent
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofencingClient
@@ -85,6 +90,43 @@ class SaveReminderFragment : BaseFragment() {
                 .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER)
                 .addGeofence(geofence)
                 .build()
+
+            geofencingClient.removeGeofences(geofencePendingIntent)?.run {
+                addOnCompleteListener {
+                    if (context?.let { it1 ->
+                            ActivityCompat.checkSelfPermission(
+                                it1,
+                                Manifest.permission.ACCESS_FINE_LOCATION
+                            )
+                        } != PackageManager.PERMISSION_GRANTED
+                    ) {
+                        // TODO: Consider calling
+                        //    ActivityCompat#requestPermissions
+                        // here to request the missing permissions, and then overriding
+                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                        //                                          int[] grantResults)
+                        // to handle the case where the user grants the permission. See the documentation
+                        // for ActivityCompat#requestPermissions for more details.
+                        return@addOnCompleteListener
+                    }
+                    geofencingClient.addGeofences(geofencingRequest, geofencePendingIntent)?.run {
+                        addOnSuccessListener {
+                            Toast.makeText(context, "Geofence added",
+                                Toast.LENGTH_SHORT)
+                                .show()
+                            Log.e("Add Geofence", geofence.requestId)
+                            //_viewModel.geofenceActivated()
+                        }
+                        addOnFailureListener {
+                            Toast.makeText(context, R.string.geofences_not_added,
+                                Toast.LENGTH_SHORT).show()
+                            if ((it.message != null)) {
+                                Log.w("", it.message!!)
+                            }
+                        }
+                    }
+                }
+            }
 
 
 //             2) save the reminder to the local db
