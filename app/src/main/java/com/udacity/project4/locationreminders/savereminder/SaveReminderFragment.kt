@@ -102,7 +102,7 @@ class SaveReminderFragment : BaseFragment() {
                         } != PackageManager.PERMISSION_GRANTED && context?.let { it1 ->
                             ActivityCompat.checkSelfPermission(
                                 it1,
-                                Manifest.permission.ACCESS_COARSE_LOCATION
+                                Manifest.permission.ACCESS_BACKGROUND_LOCATION
                             )
                         } != PackageManager.PERMISSION_GRANTED
                     ) {
