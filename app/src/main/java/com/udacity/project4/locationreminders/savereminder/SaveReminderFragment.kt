@@ -113,6 +113,7 @@ class SaveReminderFragment : BaseFragment() {
                         //                                          int[] grantResults)
                         // to handle the case where the user grants the permission. See the documentation
                         // for ActivityCompat#requestPermissions for more details.
+                        SelectLocationFragment().requestForegroundAndBackgroundLocationPermissions()
                         return@addOnCompleteListener
                     }
                     geofencingClient.addGeofences(geofencingRequest, geofencePendingIntent)?.run {

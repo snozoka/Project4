@@ -270,7 +270,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     }
 
     @TargetApi(29 )
-    private fun requestForegroundAndBackgroundLocationPermissions() {
+    fun requestForegroundAndBackgroundLocationPermissions() {
         if (foregroundAndBackgroundLocationPermissionApproved())
             return
         var permissionsArray = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
