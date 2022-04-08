@@ -78,7 +78,7 @@ class SaveReminderFragment : BaseFragment() {
 //             1) add a geofencing request
             val geofenceList = arrayListOf<Geofence>()
             val geofence = Geofence.Builder()
-                .setRequestId(_viewModel.reminderTitle.value)
+                .setRequestId(_viewModel.reminderTitle.value!!)
                 .setCircularRegion(_viewModel.latitude.value!!,
                     _viewModel.longitude.value!!,
                     100f
