@@ -95,6 +95,12 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         return binding.root
     }
 
+    override fun onStart() {
+        super.onStart()
+
+        requestForegroundAndBackgroundLocationPermissions()
+    }
+
     private fun setMapLongClick(map: GoogleMap){
         map.setOnMapLongClickListener { latLng ->
             // A Snippet is Additional text that's displayed below the title.
@@ -178,13 +184,14 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
             map.isMyLocationEnabled = true
         }
         else {
-            activity?.let {
-                ActivityCompat.requestPermissions(
-                    it,
-                    arrayOf<String>(Manifest.permission.ACCESS_FINE_LOCATION),
-                    REQUEST_LOCATION_PERMISSION
-                )
-            }
+            requestForegroundAndBackgroundLocationPermissions()
+//            activity?.let {
+//                ActivityCompat.requestPermissions(
+//                    it,
+//                    arrayOf<String>(Manifest.permission.ACCESS_FINE_LOCATION),
+//                    REQUEST_LOCATION_PERMISSION
+//                )
+//            }
         }
     }
 //    private fun isPermissionGranted() : Boolean {
@@ -245,25 +252,27 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
          * cases when a location is not available.
          */
         try {
-            if (foregroundAndBackgroundLocationPermissionApproved()) {
-                val locationResult = fusedLocationProviderClient.lastLocation
-                activity?.let {
-                    locationResult.addOnCompleteListener(it) { task ->
-                        if (task.isSuccessful) {
-                            // Set the map's camera position to the current location of the device.
-                            lastKnownLocation = task.result
-                            if (lastKnownLocation != null) {
-                                map?.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                                    LatLng(lastKnownLocation!!.latitude,
-                                        lastKnownLocation!!.longitude), DEFAULT_ZOOM.toFloat()))
-                            }
-                        } else {
-                            Log.d(TAG, "Current location is null. Using defaults.")
-                            Log.e(TAG, "Exception: %s", task.exception)
-                            map?.moveCamera(CameraUpdateFactory
-                                .newLatLngZoom(defaultLocation, DEFAULT_ZOOM.toFloat()))
-                            map?.uiSettings?.isMyLocationButtonEnabled = false
+
+            if (!foregroundAndBackgroundLocationPermissionApproved()) {
+                requestForegroundAndBackgroundLocationPermissions()
+            }
+            val locationResult = fusedLocationProviderClient.lastLocation
+            activity?.let {
+                locationResult.addOnCompleteListener(it) { task ->
+                    if (task.isSuccessful) {
+                        // Set the map's camera position to the current location of the device.
+                        lastKnownLocation = task.result
+                        if (lastKnownLocation != null) {
+                            map?.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                                LatLng(lastKnownLocation!!.latitude,
+                                    lastKnownLocation!!.longitude), DEFAULT_ZOOM.toFloat()))
                         }
+                    } else {
+                        Log.d(TAG, "Current location is null. Using defaults.")
+                        Log.e(TAG, "Exception: %s", task.exception)
+                        map?.moveCamera(CameraUpdateFactory
+                            .newLatLngZoom(defaultLocation, DEFAULT_ZOOM.toFloat()))
+                        map?.uiSettings?.isMyLocationButtonEnabled = false
                     }
                 }
             }
@@ -273,7 +282,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     }
 
     @TargetApi(29)
-    private fun foregroundAndBackgroundLocationPermissionApproved(): Boolean {
+    fun foregroundAndBackgroundLocationPermissionApproved(): Boolean {
         val foregroundLocationApproved = (
                 PackageManager.PERMISSION_GRANTED ==
                         context?.let {
@@ -355,7 +364,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         }
 //        locationSettingsResponseTask?.addOnCompleteListener {
 //            if ( it.isSuccessful ) {
-//                addGeofenceForClue()
+//                return@addOnCompleteListener
 //            }
 //        }
     }
@@ -418,25 +427,6 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         else -> super.onOptionsItemSelected(item)
     }
 
-//    override fun onMapReady(googleMap: GoogleMap?) {
-//        if (googleMap != null) {
-//            map = googleMap
-//        }
-//        val latitude = 37.422160
-//        val longitude = -122.084270
-//        val zoomLevel = 15f
-//
-////        val homeLatLng = LatLng(latitude,longitude)
-////        map.moveCamera(CameraUpdateFactory.newLatLngZoom(homeLatLng,zoomLevel))
-////        map.addMarker(MarkerOptions().position(homeLatLng).title("Marker in Sydney"))
-//        getDeviceLocation()
-//        setMapLongClick(map)
-//        setPoiClick(map)
-//        setMapStyle(map)
-//        enableMyLocation()
-//
-//
-//    }
 
     companion object {
         internal const val ACTION_GEOFENCE_EVENT =
@@ -455,18 +445,18 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         if (googleMap != null) {
             map = googleMap
         }
-        val latitude = 37.422160
-        val longitude = -122.084270
-        val zoomLevel = 15f
+//        val latitude = 37.422160
+//        val longitude = -122.084270
+//        val zoomLevel = 15f
 
 //        val homeLatLng = LatLng(latitude,longitude)
 //        map.moveCamera(CameraUpdateFactory.newLatLngZoom(homeLatLng,zoomLevel))
 //        map.addMarker(MarkerOptions().position(homeLatLng).title("Marker in Sydney"))
         getDeviceLocation()
+        enableMyLocation()
         setMapLongClick(map)
         setPoiClick(map)
         setMapStyle(map)
-        enableMyLocation()
     }
 
 
