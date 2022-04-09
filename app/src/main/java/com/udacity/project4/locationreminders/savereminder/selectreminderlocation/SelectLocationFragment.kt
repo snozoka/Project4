@@ -95,11 +95,11 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         return binding.root
     }
 
-    override fun onStart() {
-        super.onStart()
-
-        requestForegroundAndBackgroundLocationPermissions()
-    }
+//    override fun onStart() {
+//        super.onStart()
+//
+//        requestForegroundAndBackgroundLocationPermissions()
+//    }
 
     private fun setMapLongClick(map: GoogleMap){
         map.setOnMapLongClickListener { latLng ->
@@ -157,43 +157,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         }
     }
 
-    private fun enableMyLocation() {
-        if (foregroundAndBackgroundLocationPermissionApproved()) {
-            if (context?.let {
-                    ActivityCompat.checkSelfPermission(
-                        it,
-                        Manifest.permission.ACCESS_FINE_LOCATION
-                    )
-                } != PackageManager.PERMISSION_GRANTED && context?.let {
-                    ActivityCompat.checkSelfPermission(
-                        it,
-                        Manifest.permission.ACCESS_COARSE_LOCATION
-                    )
-                } != PackageManager.PERMISSION_GRANTED
-            ) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                    requestForegroundAndBackgroundLocationPermissions()
-                return
-            }
-            map.isMyLocationEnabled = true
-        }
-        else {
-            requestForegroundAndBackgroundLocationPermissions()
-//            activity?.let {
-//                ActivityCompat.requestPermissions(
-//                    it,
-//                    arrayOf<String>(Manifest.permission.ACCESS_FINE_LOCATION),
-//                    REQUEST_LOCATION_PERMISSION
-//                )
-//            }
-        }
-    }
+
 //    private fun isPermissionGranted() : Boolean {
 //        return context?.let {
 //            ContextCompat.checkSelfPermission(
@@ -215,38 +179,9 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
 //        }
 //    }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray
-    ) {
-        Log.d(TAG, "onRequestPermissionResult")
 
-        if (
-            grantResults.isEmpty() ||
-            grantResults[LOCATION_PERMISSION_INDEX] == PackageManager.PERMISSION_DENIED ||
-            (requestCode == REQUEST_FOREGROUND_AND_BACKGROUND_PERMISSION_RESULT_CODE &&
-                    grantResults[BACKGROUND_LOCATION_PERMISSION_INDEX] ==
-                    PackageManager.PERMISSION_DENIED))
-        {
-            Snackbar.make(
-                binding.root,
-                R.string.permission_denied_explanation,
-                Snackbar.LENGTH_INDEFINITE
-            )
-                .setAction(R.string.settings) {
-                    startActivity(Intent().apply {
-                        action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-                        data = Uri.fromParts("package", BuildConfig.APPLICATION_ID, null)
-                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                    })
-                }.show()
-        } else {
-            checkDeviceLocationSettingsAndStartGeofence()
-        }
-    }
-
-    private fun getDeviceLocation() {
+    private fun
+            getDeviceLocation() {
         /*
          * Get the best and most recent location of the device, which may be null in rare
          * cases when a location is not available.
@@ -279,6 +214,35 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         } catch (e: SecurityException) {
             Log.e("Exception: %s", e.message, e)
         }
+    }
+
+    private fun enableMyLocation() {
+        if (!foregroundAndBackgroundLocationPermissionApproved()) {
+            requestForegroundAndBackgroundLocationPermissions()
+        }
+        if (context?.let {
+                ActivityCompat.checkSelfPermission(
+                    it,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                )
+            } != PackageManager.PERMISSION_GRANTED && context?.let {
+                ActivityCompat.checkSelfPermission(
+                    it,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+            } != PackageManager.PERMISSION_GRANTED
+        ) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            requestForegroundAndBackgroundLocationPermissions()
+            return
+        }
+        map.isMyLocationEnabled = true
     }
 
     @TargetApi(29)
@@ -324,6 +288,36 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
                 permissionsArray,
                 resultCode
             )
+        }
+    }
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        Log.d(TAG, "onRequestPermissionResult")
+
+        if (
+            grantResults.isEmpty() ||
+            grantResults[LOCATION_PERMISSION_INDEX] == PackageManager.PERMISSION_DENIED ||
+            (requestCode == REQUEST_FOREGROUND_AND_BACKGROUND_PERMISSION_RESULT_CODE &&
+                    grantResults[BACKGROUND_LOCATION_PERMISSION_INDEX] ==
+                    PackageManager.PERMISSION_DENIED))
+        {
+            Snackbar.make(
+                binding.root,
+                R.string.permission_denied_explanation,
+                Snackbar.LENGTH_INDEFINITE
+            )
+                .setAction(R.string.settings) {
+                    startActivity(Intent().apply {
+                        action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+                        data = Uri.fromParts("package", BuildConfig.APPLICATION_ID, null)
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    })
+                }.show()
+        } else {
+            checkDeviceLocationSettingsAndStartGeofence()
         }
     }
 
