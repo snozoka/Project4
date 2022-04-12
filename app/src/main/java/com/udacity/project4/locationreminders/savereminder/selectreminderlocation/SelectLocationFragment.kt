@@ -18,10 +18,12 @@ import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
+import androidx.core.app.ActivityCompat.requestPermissions
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.content.ContextCompat.getSystemServiceName
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -76,6 +78,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     private var likelyPlaceAddresses: Array<String?> = arrayOfNulls(0)
     private var likelyPlaceAttributions: Array<List<*>?> = arrayOfNulls(0)
     private var likelyPlaceLatLngs: Array<LatLng?> = arrayOfNulls(0)
+    private lateinit var contxt: Context
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -118,6 +121,11 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
 
 
         return binding.root
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        contxt = context
     }
 
     /**
@@ -171,7 +179,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
             // Customize the styling of the base map using a JSON object defined
             // in a raw resource file.
             val success = map.setMapStyle(
-                context?.let {
+                contxt?.let {
                     MapStyleOptions.loadRawResourceStyle(
                         it,
                         R.raw.map_style
@@ -189,7 +197,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
 
 
 //    private fun isPermissionGranted() : Boolean {
-//        return context?.let {
+//        return contxt?.let {
 //            ContextCompat.checkSelfPermission(
 //                it,
 //                Manifest.permission.ACCESS_FINE_LOCATION)
@@ -262,17 +270,17 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     fun foregroundAndBackgroundLocationPermissionApproved(): Boolean {
         val foregroundLocationApproved = (
                 PackageManager.PERMISSION_GRANTED ==
-                        context?.let {
+                        contxt?.let {
                             ContextCompat.checkSelfPermission(
-                                it,
+                                contxt,
                                 Manifest.permission.ACCESS_FINE_LOCATION)
                         })
         val backgroundPermissionApproved =
             if (runningQOrLater) {
                 PackageManager.PERMISSION_GRANTED ==
-                        context?.let {
+                        contxt?.let {
                             ContextCompat.checkSelfPermission(
-                                it, Manifest.permission.ACCESS_BACKGROUND_LOCATION
+                                contxt, Manifest.permission.ACCESS_BACKGROUND_LOCATION
                             )
                         }
             } else {
@@ -286,7 +294,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     fun requestForegroundAndBackgroundLocationPermissions() {
         if (foregroundAndBackgroundLocationPermissionApproved())
             return
-        var permissionsArray = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
+        var permissionsArray = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
         val resultCode = when {
             runningQOrLater -> {
                 permissionsArray += Manifest.permission.ACCESS_BACKGROUND_LOCATION
@@ -296,14 +304,14 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         }
         Log.d(TAG, "Request foreground only location permission")
 //        activity?.let {
-//            ActivityCompat.requestPermissions(
+//            requestPermissions(
 //                requireActivity(),
 //                permissionsArray,
 //                resultCode
 //            )
 //        }
-        ActivityCompat.requestPermissions(
-            requireActivity(), permissionsArray,
+        requestPermissions(
+            permissionsArray,
             resultCode)
     }
     override fun onRequestPermissionsResult(
@@ -321,7 +329,6 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
                     grantResults[BACKGROUND_LOCATION_PERMISSION_INDEX] ==
                     PackageManager.PERMISSION_DENIED))
         {
-            locationPermissionGranted = true
             Snackbar.make(
                 binding.root,
                 R.string.permission_denied_explanation,
@@ -335,6 +342,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
                     })
                 }.show()
         } else {
+            locationPermissionGranted = true
             super.onRequestPermissionsResult(requestCode, permissions, grantResults)
             checkDeviceLocationSettingsAndStartGeofence()
         }
@@ -418,7 +426,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
 //            _viewModel.navigationCommand.value =
 //                NavigationCommand.To(SelectLocationFragmentDirections.actionSelectLocationFragmentToSaveReminderFragment())
 
-            Toast.makeText(context, "Location saved", Toast.LENGTH_SHORT).show()
+            Toast.makeText(contxt, "Location saved", Toast.LENGTH_SHORT).show()
         }
     }
 
