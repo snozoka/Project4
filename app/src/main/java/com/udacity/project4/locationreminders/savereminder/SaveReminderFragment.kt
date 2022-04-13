@@ -87,8 +87,9 @@ class SaveReminderFragment : BaseFragment() {
 
 //            Use the user entered reminder details to:
 //             1) add a geofencing request
+            var reminderDataToSave = ReminderDataItem(title,description,location,latitude,longitude)
             val geofence = Geofence.Builder()
-                .setRequestId(_viewModel.reminderTitle.value!!)
+                .setRequestId(reminderDataToSave.id)
                 .setCircularRegion(_viewModel.latitude.value!!,
                     _viewModel.longitude.value!!,
                     100f
@@ -134,52 +135,10 @@ class SaveReminderFragment : BaseFragment() {
                 }
             }
 
-//            geofencingClient.removeGeofences(geofencePendingIntent)?.run {
-//                addOnCompleteListener {
-//                    if (context?.let { it1 ->
-//                            ActivityCompat.checkSelfPermission(
-//                                it1,
-//                                Manifest.permission.ACCESS_FINE_LOCATION
-//                            )
-//                        } != PackageManager.PERMISSION_GRANTED && context?.let { it1 ->
-//                            ActivityCompat.checkSelfPermission(
-//                                it1,
-//                                Manifest.permission.ACCESS_BACKGROUND_LOCATION
-//                            )
-//                        } != PackageManager.PERMISSION_GRANTED
-//                    ) {
-//                        // TODO: Consider calling
-//                        //    ActivityCompat#requestPermissions
-//                        // here to request the missing permissions, and then overriding
-//                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-//                        //                                          int[] grantResults)
-//                        // to handle the case where the user grants the permission. See the documentation
-//                        // for ActivityCompat#requestPermissions for more details.
-//                        SelectLocationFragment().requestForegroundAndBackgroundLocationPermissions()
-//                        return@addOnCompleteListener
-//                    }
-//                    geofencingClient.addGeofences(geofencingRequest, geofencePendingIntent)?.run {
-//                        addOnSuccessListener {
-//                            Toast.makeText(contxt, "Geofence added",
-//                                Toast.LENGTH_SHORT)
-//                                .show()
-//                            Log.e("Add Geofence", geofence.requestId)
-//                            //_viewModel.geofenceActivated()
-//                        }
-//                        addOnFailureListener {
-//                            Toast.makeText(contxt, R.string.geofences_not_added,
-//                                Toast.LENGTH_SHORT).show()
-//                            if ((it.message != null)) {
-//                                Log.w("Geofence error add", it.message!!)
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-
+//
 
 //             2) save the reminder to the local db
-            var reminderDataToSave = ReminderDataItem(title,description,location,latitude,longitude)
+            //var reminderDataToSave = ReminderDataItem(title,description,location,latitude,longitude)
             _viewModel.validateAndSaveReminder(reminderDataToSave)
         }
     }
