@@ -36,5 +36,9 @@ class ReminderDescriptionActivity : AppCompatActivity() {
         var reminderDataItemDetails = intent.getSerializableExtra(EXTRA_ReminderDataItem) as ReminderDataItem
         binding.textViewDetailsTitle.text = reminderDataItemDetails.title
         binding.textViewDetailsReminderDescription.text = reminderDataItemDetails.description
+        binding.buttonReturnToReminders.setOnClickListener {
+            val intent = Intent(this, RemindersActivity::class.java)
+            startActivity(intent)
+        }
     }
 }
