@@ -2,6 +2,7 @@ package com.udacity.project4.locationreminders.savereminder
 
 import android.app.Application
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner
 import com.udacity.project4.locationreminders.MainCoroutineRule
@@ -36,7 +37,7 @@ class SaveReminderViewModelTest {
     fun setupSaveReminderViewModel(){
         //We initialise the datasource with no reminders
         fakeDataSource = FakeDataSource()
-        saveReminderViewModel = SaveReminderViewModel(app = Application(),fakeDataSource)
+        saveReminderViewModel = SaveReminderViewModel(ApplicationProvider.getApplicationContext(),fakeDataSource)
 
     }
 
