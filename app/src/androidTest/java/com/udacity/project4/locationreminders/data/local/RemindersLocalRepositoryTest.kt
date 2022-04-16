@@ -54,8 +54,8 @@ class RemindersLocalRepositoryTest {
     }
 
     @Test
-    fun saveTask_retrievesTask() = runBlockingTest {
-        // GIVEN - A new task saved in the database.
+    fun saveReminder_retrievesReminder() = runBlockingTest {
+        // GIVEN - A new reminder saved in the database.
         val newReminder = ReminderDTO("title", "description","Location1",0.0,0.0)
         localDataSource.saveReminder(newReminder)
 

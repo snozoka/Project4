@@ -79,12 +79,11 @@ class SaveReminderViewModelTest {
         saveReminderViewModel.reminderTitle.value = reminder1.title.isNullOrEmpty().toString()
         saveReminderViewModel.reminderSelectedLocationStr.value = reminder1.location.isNullOrEmpty().toString()
 
-        var true_or_false = saveReminderViewModel.validateAndSaveReminder(reminder1)
-        Log.i("validateSaveResult", true_or_false.toString())
+        //Then false should be returned
+        //assertThat(saveReminderViewModel.reminderTitle.getOrAwaitValue(), `is`("true"))
+        //assertThat(saveReminderViewModel.reminderSelectedLocationStr.getOrAwaitValue(), `is`("true"))
 
-        //Then false should be returned; here we're saying that we return true when title/location are empty
-        assertThat(saveReminderViewModel.reminderTitle.getOrAwaitValue(), `is`("true"))
-        assertThat(saveReminderViewModel.reminderSelectedLocationStr.getOrAwaitValue(), `is`("true"))
+        assertThat(saveReminderViewModel.validateEnteredData(reminder1), `is`(false))
     }
 
     fun addReminders(vararg reminders: ReminderDTO) {
