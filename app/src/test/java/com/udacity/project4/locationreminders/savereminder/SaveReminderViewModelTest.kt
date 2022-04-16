@@ -1,6 +1,7 @@
 package com.udacity.project4.locationreminders.savereminder
 
 import android.app.Application
+import android.util.Log
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -69,17 +70,19 @@ class SaveReminderViewModelTest {
 
     @Test
     fun shouldReturnError(){
-        //Given an entered reminder data
+        //Given an entered reminder data with empty values for tittle and location
         val reminder1 = ReminderDataItem("", "description1","",0.0,0.0)
         //Make the data source return errors
         fakeDataSource.setReturnError(true)
 
+        //When we call validateAndSaveReminder
         saveReminderViewModel.reminderTitle.value = reminder1.title.isNullOrEmpty().toString()
         saveReminderViewModel.reminderSelectedLocationStr.value = reminder1.location.isNullOrEmpty().toString()
 
-        //saveReminderViewModel.validateAndSaveReminder(reminder1)
+        var true_or_false = saveReminderViewModel.validateAndSaveReminder(reminder1)
+        Log.i("validateSaveResult", true_or_false.toString())
 
-        //Then an error message is shown
+        //Then false should be returned; here we're saying that we return true when title/location are empty
         assertThat(saveReminderViewModel.reminderTitle.getOrAwaitValue(), `is`("true"))
         assertThat(saveReminderViewModel.reminderSelectedLocationStr.getOrAwaitValue(), `is`("true"))
     }
