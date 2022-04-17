@@ -8,11 +8,15 @@ apply plugin: 'com.google.gms.google-services'
 android {
     compileSdkVersion rootProject.compileSdkVersion
     buildToolsVersion "30.0.3"
-    configurations.all {
-        resolutionStrategy { force 'androidx.core:core-ktx:1.6.0' }
-    }
+
 
     defaultConfig {
+        configurations.all {
+            resolutionStrategy {
+                force 'androidx.core:core-ktx:1.6.0'
+            }
+        }
+
         applicationId "com.udacity.project4"
         minSdkVersion rootProject.minSdkVersion
         targetSdkVersion rootProject.targetSdkVersion

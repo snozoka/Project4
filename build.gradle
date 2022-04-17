@@ -2,7 +2,7 @@
 
 buildscript {
     ext.kotlinVersion = '1.5.31'
-    ext.navigationVersion = "2.3.5"
+    ext.navigationVersion = "2.4.2"
 
     repositories {
         google()
@@ -34,11 +34,11 @@ ext {
     // Sdk and tools
     // Support library and architecture components support minSdk 14 and above.
     minSdkVersion = 19
-    targetSdkVersion = 30
-    compileSdkVersion = 30
+    targetSdkVersion = 31
+    compileSdkVersion = 31
 
     // App dependencies
-    nav_version = "2.4.1"
+    nav_version = "2.4.2"
     androidXVersion = '1.0.0'
     androidXAnnotations = '1.0.1'
     androidXLegacySupport = '1.0.0'

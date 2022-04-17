@@ -46,7 +46,7 @@ class RemindersListViewModelTest {
         //runBlocking { refreshTasks() }
     }
 
-    //Test the snackbar and toast messages
+//    Test the snackbar and toast messages
 //    @Test
 //    fun completeReminder_dataAndSnackbarUpdated() {
 //        // Create an active task and add it to the repository.
