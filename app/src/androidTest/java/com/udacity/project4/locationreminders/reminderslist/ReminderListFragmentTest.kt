@@ -12,9 +12,17 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
 import com.udacity.project4.R
+import com.udacity.project4.locationreminders.data.ReminderDataSource
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
+import com.udacity.project4.locationreminders.data.local.RemindersDao
+import com.udacity.project4.locationreminders.data.local.RemindersLocalRepository
+import com.udacity.project4.locationreminders.data.local.RemindersLocalRepositoryTest
+import com.udacity.project4.locationreminders.savereminder.SaveReminderFragment
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert.*
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito.mock
@@ -25,16 +33,50 @@ import org.mockito.Mockito.verify
 //UI Testing
 @MediumTest
 class ReminderListFragmentTest {
-    //Given a list of reminders
-    val reminder1 = ReminderDTO("Title1", "Description1","Location1",0.0,0.0)
-    val reminder2 = ReminderDTO("Title2", "Description2", "Location2",0.1,0.1)
-    val reminder3 = ReminderDTO("Title3", "Description3", "Location3",0.3,0.3)
+    private lateinit var remindersDao: RemindersDao
+    private lateinit var repositoryTest: RemindersLocalRepository
 
-    //When the list of reminders get displayed on the screen
-    //val bundle = ReminderListFragment
-    //launchFragmentInContainer<ReminderListFragment>(bundle, R.style.AppTheme)
+    @Before
+    fun initRepository() {
+        remindersDao = ReminderDao
+        repositoryTest = RemindersLocalRepository(remindersDao,Dispatchers.Main)
+    }
+
+    //    TODO: test the displayed data on the UI.
+    @Test
+    fun activeReminderList_displayUI() = runBlockingTest{
+        //Given a list of reminders
+        val reminder1 = ReminderDTO("Title1", "Description1","Location1",0.0,0.0)
+        val reminder2 = ReminderDTO("Title2", "Description2", "Location2",0.1,0.1)
+        val reminder3 = ReminderDTO("Title3", "Description3", "Location3",0.3,0.3)
+
+        repositoryTest.saveReminder(reminder1)
+        repositoryTest.saveReminder(reminder2)
+        repositoryTest.saveReminder(reminder3)
+
+        //When the list of reminders get displayed on the screen
+        //val bundle = ReminderListFragment().toBundle()
+        launchFragmentInContainer<ReminderListFragment>(Bundle(), R.style.AppTheme)
+    }
+
 
 //    TODO: test the navigation of the fragments.
-//    TODO: test the displayed data on the UI.
+@Test
+fun clickAddReminderFAButton_navigateToSaveReminderFragment() {
+    //Given on ReminderList screen
+    val scenario = launchFragmentInContainer<ReminderListFragment> (Bundle(), R.style.AppTheme)
+    val navController = mock(NavController::class.java)
+    scenario.onFragment {
+        Navigation.setViewNavController(it.view!!, navController)
+    }
+
+    //When - Click on '+' button
+    onView(withId(R.id.addReminderFAB)).perform(click())
+
+    //THEN - Verify that we navigate to the save reminder screen
+    verify(navController).navigate(ReminderListFragmentDirections.toSaveReminder()
+    )
+}
+
 //    TODO: add testing for the error messages.
 }
