@@ -6,6 +6,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner
+import com.udacity.project4.R
 import com.udacity.project4.locationreminders.MainCoroutineRule
 import com.udacity.project4.locationreminders.data.FakeDataSource
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
@@ -15,6 +16,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.core.Is.`is`
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -84,6 +86,24 @@ class SaveReminderViewModelTest {
         //assertThat(saveReminderViewModel.reminderSelectedLocationStr.getOrAwaitValue(), `is`("true"))
 
         assertThat(saveReminderViewModel.validateEnteredData(reminder1), `is`(false))
+    }
+
+    //    TODO: add testing for the error messages.
+//    Test the snackbar and toast messages
+    @Test
+    fun errorInTitle_SnackbarUpdated()  {
+        // Create a reminder without a title and add it to the repository.
+        val reminder = ReminderDataItem("", "Description","Location1",0.0,0.0)
+
+        //Make the data source return errors
+        fakeDataSource.setReturnError(true)
+
+        // Verify that the entered data fails validation.
+        assertThat(saveReminderViewModel.validateEnteredData(reminder), `is`(false))
+
+        // Assert that the snackbar has been updated with the correct text.
+        val snackbarText =  saveReminderViewModel.showSnackBarInt.value
+        assertThat(snackbarText, `is`(R.string.err_enter_title))
     }
 
     fun addReminders(vararg reminders: ReminderDTO) {

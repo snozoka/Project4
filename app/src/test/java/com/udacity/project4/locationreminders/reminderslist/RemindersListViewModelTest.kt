@@ -9,6 +9,7 @@ import com.udacity.project4.locationreminders.data.dto.ReminderDTO
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.Before
 import org.junit.Rule
+import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
@@ -46,22 +47,6 @@ class RemindersListViewModelTest {
         //runBlocking { refreshTasks() }
     }
 
-//    Test the snackbar and toast messages
-//    @Test
-//    fun completeReminder_dataAndSnackbarUpdated() {
-//        // Create an active task and add it to the repository.
-//        val reminder = ReminderDTO("Title", "Description","Location1",0.0,0.0)
-//        remindersRepository.addTasks(reminder)
-//
-//        // Mark the task as complete task.
-//        tasksViewModel.completeTask(task, true)
-//
-//        // Verify the task is completed.
-//        assertThat(tasksRepository.tasksServiceData[task.id]?.isCompleted, `is`(true))
-//
-//        // Assert that the snackbar has been updated with the correct text.
-//        val snackbarText: Event<Int> =  tasksViewModel.snackbarText.getOrAwaitValue()
-//        assertThat(snackbarText.getContentIfNotHandled(), `is`(R.string.task_marked_complete))
-//    }
+
 
 }

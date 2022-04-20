@@ -6,6 +6,7 @@ import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.room.Room
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
@@ -17,9 +18,11 @@ import com.udacity.project4.locationreminders.data.ReminderDataSource
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
 import com.udacity.project4.locationreminders.data.local.*
 import com.udacity.project4.locationreminders.savereminder.SaveReminderFragment
+import com.udacity.project4.locationreminders.savereminder.SaveReminderViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
+import org.hamcrest.core.Is.`is`
 import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
@@ -45,6 +48,7 @@ class ReminderListFragmentTest {
         RemindersDatabase::class.java
         ).build()
         repositoryTest = RemindersLocalRepository(database.reminderDao(),Dispatchers.Main)
+
     }
 
     @After
@@ -86,5 +90,4 @@ fun clickAddReminderFAButton_navigateToSaveReminderFragment() {
     )
 }
 
-//    TODO: add testing for the error messages.
 }
