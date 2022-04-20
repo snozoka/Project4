@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
@@ -14,15 +15,15 @@ import androidx.test.filters.MediumTest
 import com.udacity.project4.R
 import com.udacity.project4.locationreminders.data.ReminderDataSource
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
-import com.udacity.project4.locationreminders.data.local.RemindersDao
-import com.udacity.project4.locationreminders.data.local.RemindersLocalRepository
-import com.udacity.project4.locationreminders.data.local.RemindersLocalRepositoryTest
+import com.udacity.project4.locationreminders.data.local.*
 import com.udacity.project4.locationreminders.savereminder.SaveReminderFragment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
+import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito.mock
@@ -33,14 +34,21 @@ import org.mockito.Mockito.verify
 //UI Testing
 @MediumTest
 class ReminderListFragmentTest {
-    private lateinit var remindersDao: RemindersDao
+    private lateinit var database: RemindersDatabase
     private lateinit var repositoryTest: RemindersLocalRepository
+
 
     @Before
     fun initRepository() {
-        remindersDao = ReminderDao
-        repositoryTest = RemindersLocalRepository(remindersDao,Dispatchers.Main)
+        database = Room.inMemoryDatabaseBuilder(
+                getApplicationContext(),
+        RemindersDatabase::class.java
+        ).build()
+        repositoryTest = RemindersLocalRepository(database.reminderDao(),Dispatchers.Main)
     }
+
+    @After
+    fun closeDb() = database.close()
 
     //    TODO: test the displayed data on the UI.
     @Test
