@@ -5,6 +5,7 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
+import com.udacity.project4.MainCoroutineRule
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
 import com.udacity.project4.locationreminders.data.dto.Result
 import kotlinx.coroutines.Dispatchers
@@ -27,6 +28,10 @@ class RemindersLocalRepositoryTest {
     // Executes each task synchronously using Architecture Components.
     @get:Rule
     var instantExecutorRule = InstantTaskExecutorRule()
+
+    @ExperimentalCoroutinesApi
+    @get:Rule
+    var mainCoroutineRule = MainCoroutineRule()
 
     private lateinit var localDataSource: RemindersLocalRepository
     private lateinit var database: RemindersDatabase
@@ -54,7 +59,7 @@ class RemindersLocalRepositoryTest {
     }
 
     @Test
-    fun saveReminder_retrievesReminder() = runBlockingTest {
+    fun saveReminder_retrievesReminder() = mainCoroutineRule.runBlockingTest {
         // GIVEN - A new reminder saved in the database.
         val newReminder = ReminderDTO("title", "description","Location1",0.0,0.0)
         localDataSource.saveReminder(newReminder)

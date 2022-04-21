@@ -2,6 +2,7 @@ package com.udacity.project4.locationreminders.reminderslist
 
 import android.content.Context
 import android.os.Bundle
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -14,6 +15,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
 import com.udacity.project4.R
+import com.udacity.project4.MainCoroutineRule
 import com.udacity.project4.locationreminders.data.ReminderDataSource
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
 import com.udacity.project4.locationreminders.data.local.*
@@ -37,8 +39,17 @@ import org.mockito.Mockito.verify
 //UI Testing
 @MediumTest
 class ReminderListFragmentTest {
+    //Executes each task synchronously using Architecture components
+    @get:Rule
+    var instantTaskExecutorRule = InstantTaskExecutorRule()
+
+    @ExperimentalCoroutinesApi
+    @get:Rule
+    var mainCoroutineRule = MainCoroutineRule()
+
     private lateinit var database: RemindersDatabase
     private lateinit var repositoryTest: RemindersLocalRepository
+
 
 
     @Before
@@ -56,7 +67,7 @@ class ReminderListFragmentTest {
 
     //    TODO: test the displayed data on the UI.
     @Test
-    fun activeReminderList_displayUI() = runBlockingTest{
+    fun activeReminderList_displayUI() = mainCoroutineRule.runBlockingTest {
         //Given a list of reminders
         val reminder1 = ReminderDTO("Title1", "Description1","Location1",0.0,0.0)
         val reminder2 = ReminderDTO("Title2", "Description2", "Location2",0.1,0.1)
@@ -72,7 +83,7 @@ class ReminderListFragmentTest {
     }
 
 
-//    TODO: test the navigation of the fragments.
+//    Test the navigation of the fragments.
 @Test
 fun clickAddReminderFAButton_navigateToSaveReminderFragment() {
     //Given on ReminderList screen

@@ -37,8 +37,13 @@ class FakeDataSource(var reminders: MutableList<ReminderDTO>? = mutableListOf())
     }
 
     override suspend fun getReminder(id: String): Result<ReminderDTO> {
-        TODO("return the reminder with the id")
-        //reminders?.get(id)?.let { return Success(it) }
+        //("return the reminder with the id")
+        reminders?.find{it.id == id }?.let { return Success(it) }
+        //val reminderSelected = reminders?.find{ it.id == id }
+        //return Success(reminderSelected)
+        return Error(
+            "Reminder not found"
+        )
 
     }
 

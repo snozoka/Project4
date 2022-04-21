@@ -115,7 +115,7 @@ class RemindersActivityTest :
         // Set initial state.
         repository.saveReminder(ReminderDTO("TITLE1", "DESCRIPTION", "Location1",0.0,0.0))
 
-        // Start up Tasks screen.
+        // Start up Reminder screen.
         val activityScenario = ActivityScenario.launch(RemindersActivity::class.java)
         dataBindingIdlingResource.monitorActivity(activityScenario)
 
