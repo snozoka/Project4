@@ -168,7 +168,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
             poiMarker?.showInfoWindow()
             //selectedPoiMarker = poiMarker.
             selectedLatitude = poiMarker?.position?.latitude!!
-            selectedLongitude = poiMarker?.position.longitude
+            selectedLongitude = poiMarker?.position?.longitude!!
             selectedPointerTitle = poiMarker?.title.toString()
 
         }
