@@ -1,6 +1,7 @@
 package com.udacity.project4
 
 import android.app.Application
+import android.os.Bundle
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -111,7 +112,7 @@ class RemindersActivityTest :
 
 //    TODO: add End to End testing to the app
     @Test
-    fun editTask() = runBlocking {
+    fun editReminder() = runBlocking {
         // Set initial state.
         repository.saveReminder(ReminderDTO("TITLE1", "DESCRIPTION", "Location1",0.0,0.0))
 
@@ -179,7 +180,7 @@ class RemindersActivityTest :
         val mockNavController = mock(NavController::class.java)
 
         // Create a graphical FragmentScenario for the TitleScreen
-        val titleScenario = launchFragmentInContainer<SaveReminderFragment>()
+        val titleScenario = launchFragmentInContainer<SaveReminderFragment>(Bundle(), R.style.AppTheme)
 
         // Set the NavController property on the fragment
         titleScenario.onFragment { fragment ->
@@ -187,7 +188,7 @@ class RemindersActivityTest :
         }
 
         // Verify that performing a click prompts the correct Navigation action
-        onView(ViewMatchers.withId(R.id.saveReminder)).perform(ViewActions.click())
+        onView(withId(R.id.saveReminder)).perform(click())
         verify(mockNavController).navigate(R.id.action_saveReminderFragment_to_reminderListFragment)
         //verify(mockNavController).navigate(R.id.action_saveReminderFragment_to_selectLocationFragment)
     }
