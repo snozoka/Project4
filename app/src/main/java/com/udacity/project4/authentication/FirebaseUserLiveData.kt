@@ -7,7 +7,7 @@ import com.google.firebase.auth.FirebaseUser
 class FirebaseUserLiveData: LiveData<FirebaseUser?>() {
     private val firebaseAuth = FirebaseAuth.getInstance()
 
-    // TODO set the value of this FireUserLiveData object by hooking it up to equal the value of the
+    // Set the value of this FireUserLiveData object by hooking it up to equal the value of the
     //  current FirebaseUser. You can utilize the FirebaseAuth.AuthStateListener callback to get
     //  updates on the current Firebase user logged into the app.
     private val authStateListener = FirebaseAuth.AuthStateListener { firebaseAuth ->

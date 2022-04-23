@@ -9,14 +9,15 @@ import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.IdlingRegistry
-import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.matcher.ViewMatchers
+import androidx.test.espresso.matcher.RootMatchers.withDecorView
 import androidx.test.espresso.matcher.ViewMatchers.*
+import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
+import com.google.android.material.internal.ContextUtils.getActivity
 import com.udacity.project4.locationreminders.RemindersActivity
 import com.udacity.project4.locationreminders.data.ReminderDataSource
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
@@ -29,8 +30,11 @@ import com.udacity.project4.util.DataBindingIdlingResource
 import com.udacity.project4.util.monitorActivity
 import com.udacity.project4.utils.EspressoIdlingResource
 import kotlinx.coroutines.runBlocking
+import org.hamcrest.Matchers.`is`
+import org.hamcrest.Matchers.not
 import org.junit.After
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -41,6 +45,7 @@ import org.koin.test.AutoCloseKoinTest
 import org.koin.test.get
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
+
 
 @RunWith(AndroidJUnit4::class)
 @LargeTest
@@ -110,7 +115,7 @@ class RemindersActivityTest :
     }
 
 
-//    TODO: add End to End testing to the app
+//    Add End to End testing to the app
     @Test
     fun editReminder() = runBlocking {
         // Set initial state.
@@ -120,22 +125,24 @@ class RemindersActivityTest :
         val activityScenario = ActivityScenario.launch(RemindersActivity::class.java)
         dataBindingIdlingResource.monitorActivity(activityScenario)
 
-        // Espresso code will go here.
-        // Click on the reminder on the list and verify that all the data is correct.
-//        onView(withText("TITLE1")).perform(click())
-//        onView(withId(R.id.task_detail_title_text)).check(matches(withText("TITLE1")))
-//        onView(withId(R.id.task_detail_description_text)).check(matches(withText("DESCRIPTION")))
-//        onView(withId(R.id.selectedLocation)).check(matches(withText("Location1")))
-//        onView(withId(R.id.task_detail_latitude_text)).check(matches(withText("DESCRIPTION")))
-//        onView(withId(R.id.task_detail_longitude_text)).check(matches(withText("DESCRIPTION")))
-//        onView(withId(R.id.task_detail_complete_checkbox)).check(matches(not(isChecked())))
 
-        // Click on the edit button, edit, and save.
+        // Click on the save reminder button, add reminder, and save.
         onView(withId(R.id.addReminderFAB)).perform(click())
         onView(withId(R.id.reminderTitle)).perform(replaceText("NEW TITLE"))
         onView(withId(R.id.reminderDescription)).perform(replaceText("NEW DESCRIPTION"))
         onView(withId(R.id.selectedLocation)).perform(replaceText("NEW LOCATION"))
         onView(withId(R.id.saveReminder)).perform(click())
+        onView(withId(com.google.android.material.R.id.snackbar_text))
+        .check(matches(withText(R.string.err_enter_title)))
+        onView(withId(com.google.android.material.R.id.snackbar_text))
+        .check(matches(withText(R.string.err_select_location)))
+
+
+//        onView(withText(R.string.reminder_saved)).inRoot(
+//            withDecorView(
+//                not(`is`(getActivity()?.window?.decorView!!))
+//            )
+//        ).check(matches(isDisplayed()))
 
         // Verify task is displayed on screen in the reminder list.
         onView(withText("NEW TITLE")).check(matches(isDisplayed()))

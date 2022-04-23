@@ -5,12 +5,13 @@ import com.udacity.project4.locationreminders.data.dto.ReminderDTO
 import com.udacity.project4.locationreminders.data.dto.Result
 import com.udacity.project4.locationreminders.data.dto.Result.Success
 import com.udacity.project4.locationreminders.data.dto.Result.Error
+import com.udacity.project4.locationreminders.data.local.RemindersDao
 import org.junit.Rule
 
 //Use FakeDataSource that acts as a test double to the LocalDataSource
 class FakeDataSource(var reminders: MutableList<ReminderDTO>? = mutableListOf()) : ReminderDataSource {
     private var shouldReturnError = false
-    var remindersServiceData: LinkedHashMap<String, ReminderDTO> = LinkedHashMap()
+    //var remindersServiceData: LinkedHashMap<String, ReminderDTO> = LinkedHashMap()
 
     //Add new test coroutine dispatcher to avoid error with dispatcher.main, including for viewModelScope
     @get:Rule
@@ -37,7 +38,11 @@ class FakeDataSource(var reminders: MutableList<ReminderDTO>? = mutableListOf())
     }
 
     override suspend fun getReminder(id: String): Result<ReminderDTO> {
-        //("return the reminder with the id")
+        if (shouldReturnError) {
+            return Error(
+                "Reminder not found"
+            )
+        }
         reminders?.find{it.id == id }?.let { return Success(it) }
         //val reminderSelected = reminders?.find{ it.id == id }
         //return Success(reminderSelected)

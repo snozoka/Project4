@@ -32,7 +32,7 @@ class ReminderDescriptionActivity : AppCompatActivity() {
             this,
             R.layout.activity_reminder_description
         )
-//        TODO: Add the implementation of the reminder details
+//        Add the implementation of the reminder details
         var reminderDataItemDetails = intent.getSerializableExtra(EXTRA_ReminderDataItem) as ReminderDataItem
         binding.textViewDetailsTitle.text = reminderDataItemDetails.title
         binding.textViewDetailsReminderDescription.text = reminderDataItemDetails.description

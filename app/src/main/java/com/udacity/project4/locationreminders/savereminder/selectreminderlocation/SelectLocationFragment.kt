@@ -419,7 +419,12 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         //         send back the selected location details to the view model
         //         and navigate back to the previous fragment to save the reminder and add the geofence
         binding.buttonSaveReminder.setOnClickListener {
-            _viewModel.reminderSelectedLocationStr.value = selectedPointerTitle
+            if (selectedPointerTitle == null){
+                _viewModel.reminderSelectedLocationStr.value = "Unknown location"
+            }
+            else{
+                _viewModel.reminderSelectedLocationStr.value = selectedPointerTitle
+            }
             _viewModel.latitude.value = selectedLatitude
             _viewModel.longitude.value = selectedLongitude
             //_viewModel.selectedPOI.value = selectedPoiMarker
