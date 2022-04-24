@@ -78,5 +78,21 @@ class RemindersLocalRepositoryTest {
 
     }
 
+    @Test
+    fun failToSaveReminder_retrieveReminder() = mainCoroutineRule.runBlockingTest {
+        // GIVEN - A new reminder saved in the database.
+//        val newReminder = ReminderDTO("", "","Location1",0.0,0.0)
+//        localDataSource.saveReminder(newReminder)
+
+        // WHEN  - Task retrieved by ID.
+        val result = localDataSource.getReminder("test")
+
+        // THEN - Same task is returned.
+        //assertThat(result.succeeded, `is`(true))
+        result as Result.Error
+        assertThat(result.message, `is`("Reminder not found!"))
+
+    }
+
 
 }

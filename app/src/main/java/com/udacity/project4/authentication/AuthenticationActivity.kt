@@ -60,6 +60,7 @@ class AuthenticationActivity : AppCompatActivity() {
                 .build(),
             SIGN_IN_RESULT_CODE
         )
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

@@ -138,7 +138,7 @@ dependencies {
     implementation "com.google.android.gms:play-services-maps:18.0.2"
 
     //Firebase
-    implementation platform('com.google.firebase:firebase-bom:29.3.0')
+    implementation platform('com.google.firebase:firebase-bom:29.3.1')
     //implementation 'com.google.firebase:firebase-analytics-ktx'
 
     //Multidex

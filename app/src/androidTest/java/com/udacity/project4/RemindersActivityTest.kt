@@ -54,6 +54,7 @@ class RemindersActivityTest :
     AutoCloseKoinTest() {// Extended Koin Test - embed autoclose @after method to close Koin after every test
 
     private lateinit var repository: ReminderDataSource
+    private lateinit var saveReminderViewModel:SaveReminderViewModel
     private lateinit var appContext: Application
     // An idling resource that waits for Data Binding to have no pending bindings.
     private val dataBindingIdlingResource = DataBindingIdlingResource()
@@ -93,6 +94,8 @@ class RemindersActivityTest :
         runBlocking {
             repository.deleteAllReminders()
         }
+
+        saveReminderViewModel = get()
     }
 
     /**
@@ -119,18 +122,21 @@ class RemindersActivityTest :
     @Test
     fun editReminder() = runBlocking {
         // Set initial state.
-        repository.saveReminder(ReminderDTO("TITLE1", "DESCRIPTION", "Location1",0.0,0.0))
+        repository.saveReminder(ReminderDTO("TITLE1", "DESCRIPTION", "Location1",-33.8523341,151.2106085))
 
         // Start up Reminder screen.
         val activityScenario = ActivityScenario.launch(RemindersActivity::class.java)
         dataBindingIdlingResource.monitorActivity(activityScenario)
+
+        //SaveReminderViewModel().reminderSelectedLocationStr.value = "Location1"
+
 
 
         // Click on the save reminder button, add reminder, and save.
         onView(withId(R.id.addReminderFAB)).perform(click())
         onView(withId(R.id.reminderTitle)).perform(replaceText("NEW TITLE"))
         onView(withId(R.id.reminderDescription)).perform(replaceText("NEW DESCRIPTION"))
-        onView(withId(R.id.selectedLocation)).perform(replaceText("NEW LOCATION"))
+        //onView(withId(R.id.selectedLocation)).check(matches(withText("Location1")))
         onView(withId(R.id.saveReminder)).perform(click())
         onView(withId(com.google.android.material.R.id.snackbar_text))
         .check(matches(withText(R.string.err_enter_title)))
