@@ -96,6 +96,11 @@ class RemindersActivityTest :
         }
 
         saveReminderViewModel = get()
+
+        //Set the
+        saveReminderViewModel.reminderSelectedLocationStr.postValue("Location1")
+        saveReminderViewModel.latitude.postValue(-33.8523341)
+        saveReminderViewModel.longitude.postValue(151.2106085)
     }
 
     /**
@@ -120,72 +125,69 @@ class RemindersActivityTest :
 
 //    Add End to End testing to the app
     @Test
-    fun editReminder() = runBlocking {
-        // Set initial state.
-        repository.saveReminder(ReminderDTO("TITLE1", "DESCRIPTION", "Location1",-33.8523341,151.2106085))
+    fun createOneReminder_happyPath() {
 
-        // Start up Reminder screen.
+        // start up Tasks screen
         val activityScenario = ActivityScenario.launch(RemindersActivity::class.java)
         dataBindingIdlingResource.monitorActivity(activityScenario)
 
-        //SaveReminderViewModel().reminderSelectedLocationStr.value = "Location1"
-
-
-
-        // Click on the save reminder button, add reminder, and save.
+        // Add active task
         onView(withId(R.id.addReminderFAB)).perform(click())
-        onView(withId(R.id.reminderTitle)).perform(replaceText("NEW TITLE"))
-        onView(withId(R.id.reminderDescription)).perform(replaceText("NEW DESCRIPTION"))
-        //onView(withId(R.id.selectedLocation)).check(matches(withText("Location1")))
+        onView(withId(R.id.reminderTitle))
+            .perform(typeText("TITLE1"), closeSoftKeyboard())
+        onView(withId(R.id.reminderDescription)).perform(typeText("DESCRIPTION"),closeSoftKeyboard())
         onView(withId(R.id.saveReminder)).perform(click())
-        onView(withId(com.google.android.material.R.id.snackbar_text))
-        .check(matches(withText(R.string.err_enter_title)))
-        onView(withId(com.google.android.material.R.id.snackbar_text))
-        .check(matches(withText(R.string.err_select_location)))
+
+        // Open it in details view
+        onView(withText("TITLE1")).perform(click())
+        // Click delete task in menu
+        //onView(withId(R.id.menu_delete)).perform(click())
 
 
-//        onView(withText(R.string.reminder_saved)).inRoot(
-//            withDecorView(
-//                not(`is`(getActivity()?.window?.decorView!!))
-//            )
-//        ).check(matches(isDisplayed()))
+        //Test that the Toast message displays after the reminder is saved
+        onView(withText(R.string.reminder_saved)).inRoot(
+            withDecorView(
+                not(`is`(getActivity()?.window?.decorView!!))
+            )
+        ).check(matches(isDisplayed()))
 
-        // Verify task is displayed on screen in the reminder list.
-        onView(withText("NEW TITLE")).check(matches(isDisplayed()))
-        // Verify previous reminder is not displayed.
-        onView(withText("TITLE1")).check(doesNotExist())
-
+        // Verify it was deleted
+//        onView(withId(R.id.menu_filter)).perform(click())
+//        onView(withText(R.string.nav_all)).perform(click())
+//        onView(withText("TITLE1")).check(doesNotExist())
 
         // Make sure the activity is closed before resetting the db:
         activityScenario.close()
     }
 
-//    @Test
-//    fun createOneTask_deleteTask() {
-//
-//        // start up Tasks screen
-//        val activityScenario = ActivityScenario.launch(RemindersActivity::class.java)
-//        dataBindingIdlingResource.monitorActivity(activityScenario)
-//
-//        // Add active task
-//        onView(withId(R.id.add_task_fab)).perform(click())
-//        onView(withId(R.id.add_task_title_edit_text))
-//            .perform(typeText("TITLE1"), closeSoftKeyboard())
-//        onView(withId(R.id.add_task_description_edit_text)).perform(typeText("DESCRIPTION"))
-//        onView(withId(R.id.save_task_fab)).perform(click())
-//
-//        // Open it in details view
-//        onView(withText("TITLE1")).perform(click())
-//        // Click delete task in menu
-//        onView(withId(R.id.menu_delete)).perform(click())
-//
-//        // Verify it was deleted
+    @Test
+    fun createOneReminder_unhHappyPath() {
+
+        // start up Tasks screen
+        val activityScenario = ActivityScenario.launch(RemindersActivity::class.java)
+        dataBindingIdlingResource.monitorActivity(activityScenario)
+
+        // Add reminder without title
+        onView(withId(R.id.addReminderFAB)).perform(click())
+        onView(withId(R.id.reminderTitle))
+            .perform(typeText(""), closeSoftKeyboard())
+        onView(withId(R.id.reminderDescription)).perform(typeText("DESCRIPTION"),closeSoftKeyboard())
+        onView(withId(R.id.saveReminder)).perform(click())
+
+        //Verify that Snackbar has accurate text
+        onView(withId(com.google.android.material.R.id.snackbar_text))
+            .check(matches(withText(R.string.err_enter_title)))
+//        onView(withId(com.google.android.material.R.id.snackbar_text))
+//            .check(matches(withText(R.string.err_select_location)))
+
+
+        // Verify it was deleted
 //        onView(withId(R.id.menu_filter)).perform(click())
 //        onView(withText(R.string.nav_all)).perform(click())
 //        onView(withText("TITLE1")).check(doesNotExist())
-//        // Make sure the activity is closed before resetting the db:
-//        activityScenario.close()
-//    }
+        // Make sure the activity is closed before resetting the db:
+        activityScenario.close()
+    }
 
     @Test
     fun testNavigationToRemindersListScreen() {
@@ -205,5 +207,47 @@ class RemindersActivityTest :
         verify(mockNavController).navigate(R.id.action_saveReminderFragment_to_reminderListFragment)
         //verify(mockNavController).navigate(R.id.action_saveReminderFragment_to_selectLocationFragment)
     }
+
+//    @Test
+//    fun happyPath_reminderSaved() = runBlocking {
+//        // Set initial state.
+//        repository.saveReminder(ReminderDTO("TITLE1", "DESCRIPTION", "Location1",-33.8523341,151.2106085))
+//
+//        // Start up Reminder screen.
+//        val activityScenario = ActivityScenario.launch(RemindersActivity::class.java)
+//        dataBindingIdlingResource.monitorActivity(activityScenario)
+//
+//        //saveReminderViewModel.reminderSelectedLocationStr.value = "Location1"
+//
+//
+//
+//        // Click on the save reminder button, add reminder, and save.
+//        onView(withId(R.id.addReminderFAB)).perform(click())
+//        onView(withId(R.id.reminderTitle)).perform(replaceText("NEW TITLE"))
+//        onView(withId(R.id.reminderDescription)).perform(replaceText("NEW DESCRIPTION"))
+//        onView(withId(R.id.selectedLocation)).check(matches(withText("Location1")))
+//        onView(withId(R.id.saveReminder)).perform(click())
+//        onView(withId(com.google.android.material.R.id.snackbar_text))
+//            .check(matches(withText(R.string.err_enter_title)))
+//        onView(withId(com.google.android.material.R.id.snackbar_text))
+//            .check(matches(withText(R.string.err_select_location)))
+//
+//
+//        //Test that the Toast message displays after the reminder is saved
+//    onView(withText(R.string.reminder_saved)).inRoot(
+//            withDecorView(
+//                not(`is`(getActivity()?.window?.decorView!!))
+//            )
+//        ).check(matches(isDisplayed()))
+//
+//        // Verify task is displayed on screen in the reminder list.
+//        onView(withText("NEW TITLE")).check(matches(isDisplayed()))
+//        // Verify previous reminder is not displayed.
+//        onView(withText("TITLE1")).check(doesNotExist())
+//
+//
+//        // Make sure the activity is closed before resetting the db:
+//        activityScenario.close()
+//    }
 
 }
