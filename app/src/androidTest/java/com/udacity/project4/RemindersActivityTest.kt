@@ -147,7 +147,7 @@ class RemindersActivityTest :
         //Test that the Toast message displays after the reminder is saved
         onView(withText(R.string.reminder_saved)).inRoot(
             withDecorView(
-                not(`is`(getActivity()?.window?.decorView!!))
+                not(`is`(getActivity(appContext)?.window?.decorView!!))
             )
         ).check(matches(isDisplayed()))
 
