@@ -148,13 +148,15 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
                 latLng.latitude,
                 latLng.longitude
             )
-            map.addMarker(
+            val noPOI_Selected = map.addMarker(
                 MarkerOptions()
                     .position(latLng)
                     .title(getString(R.string.dropped_pin))
                     .snippet(snippet)
                     //.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
             )
+
+            selectedPointerTitle = noPOI_Selected?.title.toString()
         }
     }
 
