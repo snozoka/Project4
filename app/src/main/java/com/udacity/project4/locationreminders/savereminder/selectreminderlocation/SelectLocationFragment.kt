@@ -406,8 +406,6 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     }
 
     companion object {
-        internal const val ACTION_GEOFENCE_EVENT =
-            "SelectLocationFragment.reminderSelector.action.ACTION_GEOFENCE_EVENT"
         private val TAG = SelectLocationFragment::class.java.simpleName
         private const val DEFAULT_ZOOM = 15
 

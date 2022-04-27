@@ -42,8 +42,8 @@ class SaveReminderFragment : BaseFragment() {
     private lateinit var binding: FragmentSaveReminderBinding
     private val geofencePendingIntent: PendingIntent by lazy {
         val intent = Intent(context, GeofenceBroadcastReceiver::class.java)
-        intent.action = SelectLocationFragment.ACTION_GEOFENCE_EVENT
-        PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+        intent.action = ACTION_GEOFENCE_EVENT
+        PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_MUTABLE)
     }
     private lateinit var geofencingClient: GeofencingClient
     private lateinit var contxt: Context
@@ -96,6 +96,8 @@ class SaveReminderFragment : BaseFragment() {
 //            Use the user entered reminder details to:
 //             1) add a geofencing request
             var reminderDataToSave = ReminderDataItem(title,description,location,latitude,longitude)
+            Log.i("Saved Reminder id:", reminderDataToSave.id)
+            Log.i("Saved Reminder id:", reminderDataToSave.title.toString())
             val geofence = Geofence.Builder()
                 .setRequestId(reminderDataToSave.id)
                 .setCircularRegion(_viewModel.latitude.value!!,
@@ -299,6 +301,8 @@ class SaveReminderFragment : BaseFragment() {
     }
 
     companion object {
+        internal const val ACTION_GEOFENCE_EVENT =
+            "SelectLocationFragment.reminderSelector.action.ACTION_GEOFENCE_EVENT"
         private val TAG = SaveReminderFragment::class.java.simpleName
         private const val REQUEST_FOREGROUND_AND_BACKGROUND_PERMISSION_RESULT_CODE = 33
         private const val REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE = 34
