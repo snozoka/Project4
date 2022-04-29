@@ -29,7 +29,6 @@ import com.udacity.project4.databinding.FragmentSaveReminderBinding
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
 import com.udacity.project4.locationreminders.geofence.GeofenceBroadcastReceiver
 import com.udacity.project4.locationreminders.reminderslist.ReminderDataItem
-import com.udacity.project4.locationreminders.savereminder.selectreminderlocation.SelectLocationFragment
 import com.udacity.project4.utils.setDisplayHomeAsUpEnabled
 import kotlinx.android.synthetic.main.fragment_select_location.*
 import org.koin.android.ext.android.inject
@@ -97,12 +96,17 @@ class SaveReminderFragment : BaseFragment() {
 //             1) add a geofencing request
             var reminderDataToSave = ReminderDataItem(title,description,location,latitude,longitude)
             Log.i("Saved Reminder id:", reminderDataToSave.id)
-            Log.i("Saved Reminder id:", reminderDataToSave.title.toString())
+            Log.i("Saved Reminder title:", reminderDataToSave.title.toString())
+            Log.i("Saved Reminder description:", reminderDataToSave.description.toString())
+            Log.i("Saved Reminder location:", reminderDataToSave.location.toString())
+            Log.i("Saved Reminder latitude:", reminderDataToSave.latitude.toString())
+            Log.i("Saved Reminder longitude:", reminderDataToSave.longitude.toString())
             val geofence = Geofence.Builder()
                 .setRequestId(reminderDataToSave.id)
-                .setCircularRegion(_viewModel.latitude.value!!,
-                    _viewModel.longitude.value!!,
-                    100f
+                .setCircularRegion(
+                    reminderDataToSave.latitude!!,
+                    reminderDataToSave.longitude!!,
+                    500f
                 )
                 .setExpirationDuration(TimeUnit.HOURS.toMillis(1))
                 .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
@@ -302,7 +306,7 @@ class SaveReminderFragment : BaseFragment() {
 
     companion object {
         internal const val ACTION_GEOFENCE_EVENT =
-            "SelectLocationFragment.reminderSelector.action.ACTION_GEOFENCE_EVENT"
+            "SaveReminderFragment.reminderSelector.action.ACTION_GEOFENCE_EVENT"
         private val TAG = SaveReminderFragment::class.java.simpleName
         private const val REQUEST_FOREGROUND_AND_BACKGROUND_PERMISSION_RESULT_CODE = 33
         private const val REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE = 34
