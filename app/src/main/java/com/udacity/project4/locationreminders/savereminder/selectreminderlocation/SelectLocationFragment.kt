@@ -155,6 +155,8 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
             )
 
             selectedPointerTitle = noPOI_Selected?.title.toString()
+            selectedLatitude = noPOI_Selected?.position?.latitude!!
+            selectedLongitude = noPOI_Selected?.position?.longitude!!
         }
     }
 
@@ -313,15 +315,16 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         //         send back the selected location details to the view model
         //         and navigate back to the previous fragment to save the reminder and add the geofence
         binding.buttonSaveReminder.setOnClickListener {
-            if (selectedPointerTitle == null){
+            if (selectedPointerTitle == "Dropped Pin"){
                 _viewModel.reminderSelectedLocationStr.value = "Unknown location"
+                //_viewModel.selectedPOI.value = selectedPoiMarker
+                Log.i("non-POI selection", _viewModel.selectedPOI.toString() )
             }
             else{
                 _viewModel.reminderSelectedLocationStr.value = selectedPointerTitle
             }
             _viewModel.latitude.value = selectedLatitude
             _viewModel.longitude.value = selectedLongitude
-            //_viewModel.selectedPOI.value = selectedPoiMarker
 //            _viewModel.navigationCommand.value =
 //                NavigationCommand.To(SelectLocationFragmentDirections.actionSelectLocationFragmentToSaveReminderFragment())
 
