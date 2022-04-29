@@ -317,7 +317,6 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         binding.buttonSaveReminder.setOnClickListener {
             if (selectedPointerTitle == "Dropped Pin"){
                 _viewModel.reminderSelectedLocationStr.value = "Unknown location"
-                //_viewModel.selectedPOI.value = selectedPoiMarker
                 Log.i("non-POI selection", _viewModel.selectedPOI.toString() )
             }
             else{
@@ -325,8 +324,6 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
             }
             _viewModel.latitude.value = selectedLatitude
             _viewModel.longitude.value = selectedLongitude
-//            _viewModel.navigationCommand.value =
-//                NavigationCommand.To(SelectLocationFragmentDirections.actionSelectLocationFragmentToSaveReminderFragment())
 
             Toast.makeText(contxt, "Location saved", Toast.LENGTH_SHORT).show()
         }
