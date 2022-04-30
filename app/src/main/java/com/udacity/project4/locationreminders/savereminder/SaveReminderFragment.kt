@@ -20,6 +20,7 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
+import com.google.android.gms.tasks.Task
 import com.google.android.material.snackbar.Snackbar
 import com.udacity.project4.BuildConfig
 import com.udacity.project4.R
@@ -132,6 +133,9 @@ class SaveReminderFragment : BaseFragment() {
                     requestForegroundAndBackgroundLocationPermissions()
                 return@setOnClickListener
             }
+
+            checkDeviceLocationSettingsAndStartGeofence()
+
             geofencingClient.addGeofences(geofencingRequest, geofencePendingIntent)?.run {
                 addOnSuccessListener {
                     Toast.makeText(contxt, "Geofence added",
@@ -297,11 +301,11 @@ class SaveReminderFragment : BaseFragment() {
                 }.show()
             }
         }
-//        locationSettingsResponseTask?.addOnCompleteListener {
-//            if ( it.isSuccessful ) {
-//                return@addOnCompleteListener
-//            }
-//        }
+        locationSettingsResponseTask?.addOnCompleteListener {
+            if ( it.isSuccessful ) {
+                return@addOnCompleteListener
+            }
+        }
     }
 
     companion object {
