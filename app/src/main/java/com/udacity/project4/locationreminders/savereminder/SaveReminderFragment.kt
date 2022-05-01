@@ -118,7 +118,8 @@ class SaveReminderFragment : BaseFragment() {
                 .addGeofence(geofence)
                 .build()
 
-            if (ActivityCompat.checkSelfPermission(
+            if (
+                ActivityCompat.checkSelfPermission(
                     requireContext(),
                     Manifest.permission.ACCESS_BACKGROUND_LOCATION
                 ) != PackageManager.PERMISSION_GRANTED
@@ -133,11 +134,14 @@ class SaveReminderFragment : BaseFragment() {
                     requestForegroundAndBackgroundLocationPermissions()
                 return@setOnClickListener
             }
-
-            checkDeviceLocationSettingsAndStartGeofence()
-
+            else{
+                checkDeviceLocationSettingsAndStartGeofence()
+            }
             geofencingClient.addGeofences(geofencingRequest, geofencePendingIntent)?.run {
                 addOnSuccessListener {
+//             2) save the reminder to the local db
+                    //var reminderDataToSave = ReminderDataItem(title,description,location,latitude,longitude)
+                    _viewModel.validateAndSaveReminder(reminderDataToSave)
                     Toast.makeText(contxt, "Geofence added",
                         Toast.LENGTH_SHORT)
                         .show()
@@ -152,12 +156,6 @@ class SaveReminderFragment : BaseFragment() {
                     }
                 }
             }
-
-//
-
-//             2) save the reminder to the local db
-            //var reminderDataToSave = ReminderDataItem(title,description,location,latitude,longitude)
-            _viewModel.validateAndSaveReminder(reminderDataToSave)
         }
     }
 
