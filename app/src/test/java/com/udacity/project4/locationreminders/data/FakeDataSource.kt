@@ -17,7 +17,7 @@ class FakeDataSource(var reminders: MutableList<ReminderDTO>? = mutableListOf())
     @get:Rule
     var mainCoroutineRule = MainCoroutineRule()
 
-//    TODO: Create a fake data source to act as a double to the real data source
+//    Create a fake data source to act as a double to the real data source
 
     override suspend fun getReminders(): Result<List<ReminderDTO>> {
         if (shouldReturnError) {

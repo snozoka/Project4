@@ -216,6 +216,10 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
             if (grantResults.isNotEmpty() && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                 enableMyLocation()
             }
+            //Show error message letting users know that location permission is required for the app to function
+            else{
+                Toast.makeText(context, "Please provide locaiton permission to notify you of your reminders", Toast.LENGTH_SHORT )
+            }
         }
     }
 

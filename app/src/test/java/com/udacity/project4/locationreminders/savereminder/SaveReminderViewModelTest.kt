@@ -88,8 +88,6 @@ class SaveReminderViewModelTest {
         assertThat(saveReminderViewModel.validateEnteredData(reminder1), `is`(false))
     }
 
-    //    TODO: add testing for the error messages.
-//    Test the snackbar and toast messages
     @Test
     fun errorInTitle_SnackbarUpdated()  {
         // Create a reminder without a title and add it to the repository.
